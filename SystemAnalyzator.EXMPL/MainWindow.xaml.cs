@@ -13,16 +13,17 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SystemAnalyzator.EXMPL
-{
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
-    {
+namespace SystemAnalyzator.EXMPL {
+    public partial class MainWindow : Window {
         public MainWindow()
         {
             InitializeComponent();
         }
     }
 }
+// Программа отслеживает все процессы на компьютере и выводит графики 
+// Возможность задавать свои отслеживаемые процессы 
+// Круговой график общего времени со всеми процессами
+// Дневной график использования процессора + памяти и тд (делаем вывод что пк активен)
+// Месячный график средней активности
+ 
