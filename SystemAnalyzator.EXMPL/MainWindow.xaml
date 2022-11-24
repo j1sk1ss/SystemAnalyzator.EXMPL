@@ -14,20 +14,6 @@
                 <Line X1="20" Y1="20" X2="20" Y2="430" Stroke="Black"></Line> 
                 <Line X1="550" Y1="20" X2="550" Y2="430" Stroke="Black"></Line> 
                 
-                <ScrollViewer Width="525" Height="410" Margin="20,20,0,0">
-                    <Grid Height="410">
-                        <Grid Height="120" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left">
-                            <Line X1="0" Y1="0" X2="100" Y2="0" Stroke="Black"></Line> 
-                            <Line X1="0" Y1="120" X2="100" Y2="120" Stroke="Black"></Line> 
-                            <Line X1="0" Y1="120" X2="0" Y2="0" Stroke="Black"></Line> 
-                            <Line X1="100" Y1="120" X2="100" Y2="0" Stroke="Black"></Line> 
-                            
-                            <Button Height="20" Width="20"> + </Button>
-                        </Grid>
-                    </Grid>
-                </ScrollViewer>
-                
-
                 <Grid x:Name="Graph" Width="230" Height="130" Margin="560,20,0,0">
                     <Line X1="0" Y1="0" X2="230" Y2="0" Stroke="Black"></Line> 
                     <Line X1="0" Y1="0" X2="0" Y2="130" Stroke="Black"></Line> 
@@ -43,6 +29,13 @@
                     <Line X1 = "0" X2 = "230" Y1 = "250" Y2 = "250" Stroke="Black"></Line>
                     <Button Height="25" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"> ЧТО ТО СДЕЛАТЬ </Button>
                 </Grid>
+                
+                <ScrollViewer Width="525" Height="410" Margin="20,20,0,0">
+                    <Grid x:Name="ProcessesSpace" Height="130" VerticalAlignment="Top">
+                        <Grid Height="120" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        </Grid>
+                    </Grid>
+                </ScrollViewer>
             </Canvas>
         </Grid>
     </Grid>
