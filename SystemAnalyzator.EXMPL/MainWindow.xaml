@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SystemAnalyzator.EXMPL"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
@@ -19,7 +18,7 @@
                     <Line X1="0" Y1="0" X2="0" Y2="130" Stroke="Black"></Line> 
                     <Line X1="0" Y1="130" X2="230" Y2="130" Stroke="Black"></Line> 
                     <Line X1="230" Y1="0" X2="230" Y2="150" Stroke="Black"></Line> 
-                    <Grid></Grid>
+                    <Grid x:Name="GraphBody"></Grid>
                 </Grid>
                 
                 <Grid Width="230" Height="250" Margin="560,175,0,0">
