@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using SystemAnalyzator.EXMPL.DATA;
+using SystemAnalyzator.EXMPL.WINDOWS;
 
 namespace SystemAnalyzator.EXMPL.OBJECTS {
     public class Process {
@@ -50,6 +51,15 @@ namespace SystemAnalyzator.EXMPL.OBJECTS {
             };
             deleteButton.Click += Delete;
             InterfaceBody.Children.Add(deleteButton);
+            
+            var infoButton = new Button {
+                Height  = 20,
+                Width   = 75,
+                Content = "Статистика"
+            };
+            infoButton.Click += ShowData;
+            infoButton.Margin = new Thickness(0, 40, 0, 0);
+            InterfaceBody.Children.Add(infoButton);
         }
         private void Delete(object sender, RoutedEventArgs routedEventArgs) {
             MainWindow.Processes.Remove(this);
@@ -58,6 +68,11 @@ namespace SystemAnalyzator.EXMPL.OBJECTS {
             MainWindow.UpdateProcesses();
             MainWindow.AddEmpty();
         }
+
+        private void ShowData(object sender, RoutedEventArgs routedEventArgs) {
+            new ExtendedData(this).Show();
+        }
+        
         public void SetProcess(object sender, RoutedEventArgs e) {
             if (sender != null) {
                 var chosenProcess = new OpenFileDialog();

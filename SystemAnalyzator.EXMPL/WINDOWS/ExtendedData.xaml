@@ -1,0 +1,33 @@
+﻿<Window x:Class="SystemAnalyzator.EXMPL.WINDOWS.ExtendedData"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:SystemAnalyzator.EXMPL.WINDOWS"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        mc:Ignorable="d"
+        Title="ExtendedData" Height="480" Width="800"
+        ResizeMode="NoResize">
+    <Grid Margin="0,20,0,0">
+        <Label FontSize="20" Margin="15,-15,0,0"> Дневная статистика использования: </Label>
+        <Grid>
+            <Line X1="20" Y1 = "20" X2 = "780" Y2="20" Stroke="Black"></Line>
+            <Line X1="20" Y1 = "200" X2 = "780" Y2="200" Stroke="Black"></Line>
+            
+            <Line X1="20" Y1 = "20" X2 = "20" Y2="200" Stroke="Black"></Line>
+            <Line X1="780" Y1 = "20" X2 = "780" Y2="200" Stroke="Black"></Line>
+            
+            <lvc:CartesianChart x:Name = "DayStat" Height="180" Width="760" Margin="0,0,0,225"></lvc:CartesianChart>
+        </Grid>
+        <Label FontSize="20" Margin="15,190,0,0"> Месячная статистика использования: </Label>
+        <Grid Margin="0,200,0,0">
+            <Line X1="20" Y1 = "20" X2 = "780" Y2="20" Stroke="Black"></Line>
+            <Line X1="20" Y1 = "200" X2 = "780" Y2="200" Stroke="Black"></Line>
+            
+            <Line X1="20" Y1 = "20" X2 = "20" Y2="200" Stroke="Black"></Line>
+            <Line X1="780" Y1 = "20" X2 = "780" Y2="200" Stroke="Black"></Line>
+            
+            <lvc:CartesianChart x:Name = "MonthStat" Height="180" Width="760" Margin="0,0,0,25"></lvc:CartesianChart>
+        </Grid>
+    </Grid>
+</Window>

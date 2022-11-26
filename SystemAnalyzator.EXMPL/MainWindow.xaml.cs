@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using LiveCharts;
+using LiveCharts.Wpf;
 using Newtonsoft.Json;
 using SystemAnalyzator.EXMPL.DATA;
 using SystemAnalyzator.EXMPL.OBJECTS;
@@ -17,7 +20,11 @@ namespace SystemAnalyzator.EXMPL {
             Processes = new List<Process>();
             Data      = new Data();
 
-            _timer.Tick += HourStatistic;
+            _timer.Tick     += HourStatistic;
+            _statistic.Tick += UpdatePieChart;
+            
+            _timer.IsEnabled     = true;
+            _statistic.IsEnabled = true;
             
             AddEmpty();
             
@@ -52,13 +59,9 @@ namespace SystemAnalyzator.EXMPL {
         private readonly DispatcherTimer _timer = new () {
             Interval = new TimeSpan(0,1,0,0)
         };
-
-        private void HourStatistic(object sender, EventArgs eventArgs) {
-            foreach (var process in Processes) {
-                process.Statistic.AddHour(process.WorkTime);
-            }
-        }
-        
+        private readonly DispatcherTimer _statistic = new () {
+            Interval = new TimeSpan(0,0,0,1)
+        };
         public void UpdateProcesses() {
             ProcessesSpace.Children.Clear();
             ProcessesSpace.Height = Height + Height * Processes.Count / LineCapacity;
@@ -89,6 +92,35 @@ namespace SystemAnalyzator.EXMPL {
             }
             
             SetProcess(ProcessTemplate.GetEmptyProcess(new Process(this)), _processXCount++, _processYCount);
+        }
+        private void UpdatePieChart(object sender, EventArgs eventArgs) {
+            var timeLst = Processes.Select(process => process.WorkTime.Second).ToList();
+            var nameList = Processes.Select(process => process.Name).ToList();
+
+            var pieSeries = RealTimeStatistic.Series;
+            
+            if (pieSeries.Count == 0 || pieSeries.Count != timeLst.Count) {
+                RealTimeStatistic.Series.Clear();
+                for (var i = 0; i < timeLst.Count; i++) {
+                    RealTimeStatistic.Series.Add(
+                        new PieSeries {
+                            Title = nameList[i],
+                            Values = new ChartValues<int> {timeLst[i]},
+                            DataContext = this
+                        }
+                    );
+                }
+            }
+            else {
+                for (var i = 0; i < timeLst.Count; i++) {
+                    pieSeries[i].ActualValues[0] = timeLst[i];
+                }
+            }
+        }
+        private void HourStatistic(object sender, EventArgs eventArgs) {
+            foreach (var process in Processes) {
+                process.Statistic.AddHour(process.WorkTime);
+            }
         }
         private void SetProcess(UIElement processGrid, int x, int y) {
             ProcessesSpace.Children.Add(processGrid);
