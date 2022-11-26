@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="450" Width="820"
         Closed="ProgramClosed"
         ResizeMode="NoResize">
     <Grid>
@@ -31,7 +31,9 @@
                     <Line X1 = "0" X2 = "0" Y1 = "0" Y2 = "250" Stroke="Black"></Line>
                     <Line X1 = "230" X2 = "230" Y1 = "250" Y2 = "0" Stroke="Black"></Line>
                     <Line X1 = "0" X2 = "230" Y1 = "250" Y2 = "250" Stroke="Black"></Line>
-                    <Button Height="25" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"> ЧТО ТО СДЕЛАТЬ </Button>
+                    <ScrollViewer>
+                        <Label x:Name="ProcessesList"></Label>
+                    </ScrollViewer>
                 </Grid>
                 
                 <ScrollViewer Width="525" Height="410" Margin="20,20,0,0">

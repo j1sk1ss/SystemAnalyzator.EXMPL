@@ -20,11 +20,13 @@ namespace SystemAnalyzator.EXMPL {
             Processes = new List<Process>();
             Data      = new Data();
 
-            _timer.Tick     += HourStatistic;
-            _statistic.Tick += UpdatePieChart;
+            _timer.Tick         += HourStatistic;
+            _statistic.Tick     += UpdatePieChart;
+            _processesList.Tick += SetProcessesList;
             
-            _timer.IsEnabled     = true;
-            _statistic.IsEnabled = true;
+            _timer.IsEnabled         = true;
+            _statistic.IsEnabled     = true;
+            _processesList.IsEnabled = true;
             
             AddEmpty();
             
@@ -62,6 +64,9 @@ namespace SystemAnalyzator.EXMPL {
         private readonly DispatcherTimer _statistic = new () {
             Interval = new TimeSpan(0,0,0,1)
         };
+        private readonly DispatcherTimer _processesList = new () {
+            Interval = new TimeSpan(0,0,0,1)
+        };
         public void UpdateProcesses() {
             ProcessesSpace.Children.Clear();
             ProcessesSpace.Height = Height + Height * Processes.Count / LineCapacity;
@@ -92,6 +97,15 @@ namespace SystemAnalyzator.EXMPL {
             }
             
             SetProcess(ProcessTemplate.GetEmptyProcess(new Process(this)), _processXCount++, _processYCount);
+        }
+
+        private void SetProcessesList(object sender, EventArgs eventArgs) {
+            var processes = System.Diagnostics.Process.GetProcesses();
+            
+            ProcessesList.Content = "";
+            for (var i = 0; i < processes.Length; i++) {
+                ProcessesList.Content += $"{i + 1}) {processes[i].ProcessName}\n";
+            }
         }
         private void UpdatePieChart(object sender, EventArgs eventArgs) {
             var timeLst = Processes.Select(process => process.WorkTime.Second).ToList();
