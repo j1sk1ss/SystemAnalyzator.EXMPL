@@ -9,8 +9,8 @@ using LiveCharts;
 using LiveCharts.Wpf;
 using Newtonsoft.Json;
 using SystemAnalyzator.EXMPL.DATA;
+using SystemAnalyzator.EXMPL.FRONTEND;
 using SystemAnalyzator.EXMPL.OBJECTS;
-using SystemAnalyzator.EXMPL.UI;
 
 namespace SystemAnalyzator.EXMPL {
     public partial class MainWindow {
@@ -36,9 +36,9 @@ namespace SystemAnalyzator.EXMPL {
                 Processes = Data!.Processes;
 
                 foreach (var process in Processes) {
-                    process.InterfaceBody = ProcessTemplate.GetEmptyProcess(new Process(this));
                     process.MainWindow = this;
                     process.SetProcess(null, null);
+                    process.InterfaceBody = ProcessTemplate.GetEmptyProcess(process, false);
                 }
 
                 UpdateProcesses();
@@ -96,9 +96,8 @@ namespace SystemAnalyzator.EXMPL {
                 ProcessesSpace.Height = Height + Height * ++_processYCount;
             }
             
-            SetProcess(ProcessTemplate.GetEmptyProcess(new Process(this)), _processXCount++, _processYCount);
+            SetProcess(ProcessTemplate.GetEmptyProcess(new Process(this), true), _processXCount++, _processYCount);
         }
-
         private void SetProcessesList(object sender, EventArgs eventArgs) {
             var processes = System.Diagnostics.Process.GetProcesses();
             

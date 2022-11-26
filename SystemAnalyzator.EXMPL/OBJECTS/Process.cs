@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using SystemAnalyzator.EXMPL.DATA;
+using SystemAnalyzator.EXMPL.FRONTEND;
 using SystemAnalyzator.EXMPL.WINDOWS;
 
 namespace SystemAnalyzator.EXMPL.OBJECTS {
@@ -22,83 +23,50 @@ namespace SystemAnalyzator.EXMPL.OBJECTS {
         [JsonIgnore]
         public Grid InterfaceBody { get; set; }
         public string Name { get; set; }
-        private System.Diagnostics.Process[] ProcessBody { get; set; }
+        [JsonIgnore]
+        public System.Diagnostics.Process[] ProcessBody { get; set; }
         [JsonIgnore]
         public MainWindow MainWindow { get; set; }
-        private Label Time { get; set; }
+        [JsonIgnore]
+        public Label Time { get; set; }
         
         private readonly DispatcherTimer _timer = new () {
             Interval = new TimeSpan(0,0,0,1)
         };
-        private void AddInterface() {
-            InterfaceBody.Children.Add(new Label {
-                Content = (ProcessBody ?? Array.Empty<System.Diagnostics.Process>()).Length > 0 
-                    ? ProcessBody[^1].ProcessName : "NOT FOUND!",
-                HorizontalAlignment = HorizontalAlignment.Center
-            });
-            
-            Time = new Label {
-                Content = "сек",
-                Margin = new Thickness(0,85,0,0),
-                HorizontalAlignment = HorizontalAlignment.Center
-            };
-            InterfaceBody.Children.Add(Time);
-            
-            var deleteButton = new Button {
-                Height  = 20,
-                Width   = 75,
-                Content = "Удалить"
-            };
-            deleteButton.Click += Delete;
-            InterfaceBody.Children.Add(deleteButton);
-            
-            var infoButton = new Button {
-                Height  = 20,
-                Width   = 75,
-                Content = "Статистика"
-            };
-            infoButton.Click += ShowData;
-            infoButton.Margin = new Thickness(0, 40, 0, 0);
-            InterfaceBody.Children.Add(infoButton);
-        }
-        private void Delete(object sender, RoutedEventArgs routedEventArgs) {
+        public void Delete(object sender, RoutedEventArgs routedEventArgs) {
             MainWindow.Processes.Remove(this);
-            _timer.IsEnabled = false;
             MainWindow.DeleteProcess();
             MainWindow.UpdateProcesses();
             MainWindow.AddEmpty();
+            
+            _timer.IsEnabled = false;
         }
-
-        private void ShowData(object sender, RoutedEventArgs routedEventArgs) {
+        public void ShowData(object sender, RoutedEventArgs routedEventArgs) {
             new ExtendedData(this).Show();
         }
-        
         public void SetProcess(object sender, RoutedEventArgs e) {
             if (sender != null) {
                 var chosenProcess = new OpenFileDialog();
                 if (chosenProcess.ShowDialog() != true) return;
                 Name = chosenProcess.SafeFileName;
-            }
-            ProcessBody = System.Diagnostics.Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Name ?? " "));
-            
-            AddInterface();
-
-            if (sender != null) {
+                
                 MainWindow.Processes.Add(this);
                 MainWindow.AddEmpty();
                 (sender as Button)!.Visibility = Visibility.Hidden;
             }
             
+            ProcessBody = System.Diagnostics.Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Name ?? " "));
+            
             _timer.Tick += CheckProcess;
             _timer.IsEnabled = true;
+            
+            ProcessTemplate.AddInterface(this);
         }
-        [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", 
-            MessageId = "type: System.Diagnostics.ThreadInfo")]
         private void CheckProcess(object sender, EventArgs eventArgs) {
             ProcessBody = System.Diagnostics.Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Name));
             if (ProcessBody.Length == 0) return;
             var addSeconds = WorkTime.AddSeconds(1);
-            WorkTime = addSeconds;
+            WorkTime     = addSeconds;
             Time.Content = $"{WorkTime:mm:ss}";
         }
     }
