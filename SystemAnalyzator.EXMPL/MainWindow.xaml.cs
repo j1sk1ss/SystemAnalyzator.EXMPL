@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Threading;
 using LiveCharts;
 using LiveCharts.Wpf;
@@ -17,17 +19,17 @@ namespace SystemAnalyzator.EXMPL {
         private const string DataLocation = "Processes.json";
         public MainWindow() {
             InitializeComponent();
+            SetProcessesList();
+            
             Processes = new List<Process>();
             Data      = new Data();
 
             _timer.Tick         += HourStatistic;
             _statistic.Tick     += UpdatePieChart;
-            _processesList.Tick += SetProcessesList;
-            
+
             _timer.IsEnabled         = true;
             _statistic.IsEnabled     = true;
-            _processesList.IsEnabled = true;
-            
+
             AddEmpty();
             
             if (!File.Exists(DataLocation)) return;
@@ -61,12 +63,11 @@ namespace SystemAnalyzator.EXMPL {
         private readonly DispatcherTimer _timer = new () {
             Interval = new TimeSpan(0,1,0,0)
         };
+        
         private readonly DispatcherTimer _statistic = new () {
             Interval = new TimeSpan(0,0,0,1)
         };
-        private readonly DispatcherTimer _processesList = new () {
-            Interval = new TimeSpan(0,0,0,1)
-        };
+        
         public void UpdateProcesses() {
             ProcessesSpace.Children.Clear();
             ProcessesSpace.Height = Height + Height * Processes.Count / LineCapacity;
@@ -84,12 +85,14 @@ namespace SystemAnalyzator.EXMPL {
             _processXCount = x;
             _processYCount = y;
         }
+        
         public void DeleteProcess() {
             _processXCount -= 2;
             if (_processXCount >= 0) return;
             _processXCount = LineCapacity;
             _processYCount--;
         }
+        
         public void AddEmpty() {
             if (_processXCount > LineCapacity) {
                 _processXCount = 0;
@@ -98,14 +101,36 @@ namespace SystemAnalyzator.EXMPL {
             
             SetProcess(ProcessTemplate.GetEmptyProcess(new Process(this), true), _processXCount++, _processYCount);
         }
-        private void SetProcessesList(object sender, EventArgs eventArgs) {
+        
+        private void SetProcessesList() {
             var processes = System.Diagnostics.Process.GetProcesses();
+
+            ProcessList.Items.Clear();
+            ProcessList.Columns.Clear();
             
-            ProcessesList.Content = "";
+            ProcessList.Columns.Add(new DataGridTextColumn {
+                Header = "№",
+                Binding = new Binding {
+                    Path = new PropertyPath("Position"),
+                    Mode = BindingMode.OneWay
+                }
+            });
+            ProcessList.Columns.Add(new DataGridTextColumn {
+                Header = "Имя",
+                Binding = new Binding {
+                    Path = new PropertyPath("Name"),
+                    Mode = BindingMode.OneWay
+                }
+            });
+                
             for (var i = 0; i < processes.Length; i++) {
-                ProcessesList.Content += $"{i + 1}) {processes[i].ProcessName}\n";
+                ProcessList.Items.Add(new DataItem {
+                    Position = $"{i + 1}",
+                    Name     = $"{processes[i].ProcessName}"
+                });
             }
         }
+        
         private void UpdatePieChart(object sender, EventArgs eventArgs) {
             var timeLst = Processes.Select(process => process.WorkTime.Second).ToList();
             var nameList = Processes.Select(process => process.Name).ToList();
@@ -130,15 +155,18 @@ namespace SystemAnalyzator.EXMPL {
                 }
             }
         }
+        
         private void HourStatistic(object sender, EventArgs eventArgs) {
             foreach (var process in Processes) {
                 process.Statistic.AddHour(process.WorkTime);
             }
         }
+        
         private void SetProcess(UIElement processGrid, int x, int y) {
             ProcessesSpace.Children.Add(processGrid);
             (ProcessesSpace.Children[^1] as Grid)!.Margin = new Thickness(100 * x, 120 * y, 0, 0);
         }
+        
         private void ProgramClosed(object sender, EventArgs e) {
             try {
                 Data.Processes = Processes;

@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+
 using Microsoft.Win32;
+
 using Newtonsoft.Json;
+
 using SystemAnalyzator.EXMPL.DATA;
 using SystemAnalyzator.EXMPL.FRONTEND;
 using SystemAnalyzator.EXMPL.WINDOWS;
@@ -18,6 +21,7 @@ namespace SystemAnalyzator.EXMPL.OBJECTS {
             WorkTime      = new DateTime();
             Statistic     = new Statistic();
         }
+        
         public Statistic Statistic { get; }
         public DateTime WorkTime { get; set; }
         [JsonIgnore]
@@ -33,6 +37,7 @@ namespace SystemAnalyzator.EXMPL.OBJECTS {
         private readonly DispatcherTimer _timer = new () {
             Interval = new TimeSpan(0,0,0,1)
         };
+        
         public void Delete(object sender, RoutedEventArgs routedEventArgs) {
             MainWindow.Processes.Remove(this);
             MainWindow.DeleteProcess();
@@ -41,9 +46,11 @@ namespace SystemAnalyzator.EXMPL.OBJECTS {
             
             _timer.IsEnabled = false;
         }
+        
         public void ShowData(object sender, RoutedEventArgs routedEventArgs) {
             new ExtendedData(this).Show();
         }
+        
         public void SetProcess(object sender, RoutedEventArgs e) {
             if (sender != null) {
                 var chosenProcess = new OpenFileDialog();
@@ -62,11 +69,28 @@ namespace SystemAnalyzator.EXMPL.OBJECTS {
             
             ProcessTemplate.AddInterface(this);
         }
+        
+        public void SetProcess(string name) {
+            MainWindow.Processes.Add(this);
+            MainWindow.AddEmpty();
+
+            ProcessBody = System.Diagnostics.Process.GetProcessesByName(Path.GetFileNameWithoutExtension(name ?? " "));
+            
+            _timer.Tick += CheckProcess;
+            _timer.IsEnabled = true;
+            
+            ProcessTemplate.AddInterface(this);
+        }
+        
         private void CheckProcess(object sender, EventArgs eventArgs) {
             ProcessBody = System.Diagnostics.Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Name));
+            
             if (ProcessBody.Length == 0) return;
-            var addSeconds = WorkTime.AddSeconds(1);
-            WorkTime     = addSeconds;
+            if (ProcessBody.Any(process => process.MainWindowHandle != IntPtr.Zero)) {
+                var addSeconds = WorkTime.AddSeconds(1);
+                WorkTime = addSeconds;
+            }
+            
             Time.Content = $"{WorkTime:mm:ss}";
         }
     }

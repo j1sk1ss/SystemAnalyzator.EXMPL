@@ -32,7 +32,8 @@
                     <Line X1 = "230" X2 = "230" Y1 = "250" Y2 = "0" Stroke="Black"></Line>
                     <Line X1 = "0" X2 = "230" Y1 = "250" Y2 = "250" Stroke="Black"></Line>
                     <ScrollViewer>
-                        <Label x:Name="ProcessesList"></Label>
+                        <DataGrid x:Name="ProcessList">
+                        </DataGrid>
                     </ScrollViewer>
                 </Grid>
                 
